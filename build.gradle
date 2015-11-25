@@ -1,1 +1,9 @@
 project.apply(plugin: 'java')
+project.apply(plugin: 'idea')
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile "org.antlr:antlr4:4.5.1"
+    testCompile "junit:junit:4.12"
+}
