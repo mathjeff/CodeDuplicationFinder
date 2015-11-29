@@ -7,3 +7,12 @@ dependencies {
     compile "org.antlr:antlr4:4.5.1"
     testCompile "junit:junit:4.12"
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'Parser'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

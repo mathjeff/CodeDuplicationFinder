@@ -25,11 +25,14 @@ abstract class HierarchicalLogger implements Logger {
         return prefix;
     }
 
+    public abstract HierarchicalLogger copy();
+
     public Logger push(String description) {
         HierarchicalLogger other = null;
         try {
-            other =(HierarchicalLogger)this.clone();
+            other = this.copy();
         } catch (Exception e) {
+
             other = null;
         }
         other.parent = this;

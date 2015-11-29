@@ -9,6 +9,9 @@ import org.antlr.v4.tool.LexerGrammar;
 
 import java.io.IOException;
 
+import logging.PrintLogger;
+
+
 class Parser {
     public Parser() {
 
@@ -28,5 +31,11 @@ class Parser {
         ParseTree t = parser.parse(g.getRule(startRule).index);
         logger.message("parse tree: " + t.toStringTree(parser));
         return t;
+    }
+
+    public static void main(String[] args) throws IOException {
+        Parser parser = new Parser();
+        Logger logger = new PrintLogger();
+        parser.parse(logger, "test.java", "Java8.g4", "compilationUnit");
     }
 }
