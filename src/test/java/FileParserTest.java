@@ -1,6 +1,6 @@
 import org.junit.Test;
 
-public class ParserTest {
+public class FileParserTest {
 
 
     @Test
