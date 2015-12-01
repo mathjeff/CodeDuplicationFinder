@@ -1,45 +1,57 @@
 package parsing;
 
 import logging.Logger;
-import org.antlr.v4.runtime.ANTLRFileStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.LexerInterpreter;
-import org.antlr.v4.runtime.ParserInterpreter;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.Trees;
 import org.antlr.v4.tool.Grammar;
 
+import java.io.File;
 import java.io.IOException;
 
 import logging.PrintLogger;
 
 
-class
-FileParser {
-    public FileParser(String combinedGrammarFilePath, String parseStartRule) {
+public class FileParser {
+    public FileParser(String combinedGrammarFilePath, String parseStartRuleName) {
+        System.out.println("combined grammar file path = " + combinedGrammarFilePath);
+        assert(combinedGrammarFilePath != null);
+        File grammarFile = new File(combinedGrammarFilePath);
+        assert(grammarFile.canRead());
         this.grammar = Grammar.load(combinedGrammarFilePath);
-        this.parseStartRule = parseStartRule;
+        this.parseStartRuleName = parseStartRuleName;
     }
 
 
-    public ParseTree parse(Logger logger, String filePath)
+    public ParseItem parse(Logger logger, String filePath)
             throws IOException
     {
         logger = logger.push("parse");
+        logger.message("Parsing " + filePath);
         LexerInterpreter lexEngine = this.grammar.createLexerInterpreter(new ANTLRFileStream(filePath));
         CommonTokenStream tokens = new CommonTokenStream(lexEngine);
         ParserInterpreter parser = this.grammar.createParserInterpreter(tokens);
-        ParseTree t = parser.parse(this.grammar.getRule(this.parseStartRule).index);
-        logger.message("parse tree: " + t.toStringTree(parser));
-        return t;
+        ParserRuleContext tree = parser.parse(this.grammar.getRule(this.parseStartRuleName).index);
+        logger.message("parse tree: " + tree.toStringTree(parser));
+        ParseItem item = this.toParseItem(logger, filePath, tree, parser);
+        return item;
     }
 
-    String parseStartRule;
+    // converts a ParseTree to a ParseItem by telling each node which file and which rule it came from
+    private ParseItem toParseItem(Logger logger, String fileName, ParseTree tree, ParserInterpreter parser) {
+        String sourceDescription = fileName;
+        //String ruleName = Trees.toStringTree(tree, parser);
+        String ruleName = Trees.getNodeText(tree, parser);
+        String nodeText = tree.getText();
+        ParseItem result = new ParseItem(nodeText, ruleName, sourceDescription);
+        for (int i = 0; i < tree.getChildCount(); i++) {
+            ParseItem child = this.toParseItem(logger, fileName, tree.getChild(i), parser);
+            result.addChild(child);
+        }
+        return result;
+    }
+
+    String parseStartRuleName;
     Grammar grammar;
 
-
-    public static void main(String[] args) throws IOException {
-        FileParser parser = new FileParser(args);
-        Logger logger = new PrintLogger();
-        parser.parse(logger, "test.java", "Java8.g4", "compilationUnit");
-    }
 }

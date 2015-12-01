@@ -8,11 +8,32 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
+String javaVersion = "1.8"
+String mainClass = 'ui.CodeDuplicationFinder'
+
 jar {
     manifest {
-        attributes 'Main-Class': 'Parser'
+        attributes 'Main-Class': mainClass
     }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
+
+
+idea {
+    project {
+        languageLevel = javaVersion
+    }
+}
+
+task demo(type: JavaExec) {
+    main = mainClass
+
+    classpath = sourceSets.main.runtimeClasspath
+
+    args = ["--scan-path", [project.buildFile.parent, 'src', 'main', 'java', 'matching', 'ParseDatabase.java'].join(File.separator),
+            "--grammar-path", [project.buildFile.parent, 'src', 'main', 'resources', 'Java8.g4'].join(File.separator)]
+
+}
+demo.dependsOn(assemble)
