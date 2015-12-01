@@ -26,14 +26,14 @@ public class FileParser {
     public ParseItem parse(Logger logger, String filePath)
             throws IOException
     {
-        logger = logger.push("parse");
-        logger.message("Parsing " + filePath);
+        Logger subLogger = logger.push("parse file");
+        subLogger.message("Parsing " + filePath);
         LexerInterpreter lexEngine = this.grammar.createLexerInterpreter(new ANTLRFileStream(filePath));
         CommonTokenStream tokens = new CommonTokenStream(lexEngine);
         ParserInterpreter parser = this.grammar.createParserInterpreter(tokens);
         ParserRuleContext tree = parser.parse(this.grammar.getRule(this.parseStartRuleName).index);
         logger.message("parse tree: " + tree.toStringTree(parser));
-        ParseItem item = this.toParseItem(logger, filePath, tree, parser);
+        ParseItem item = this.toParseItem(subLogger, filePath, tree, parser);
         return item;
     }
 
