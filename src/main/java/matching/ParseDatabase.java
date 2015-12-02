@@ -43,18 +43,19 @@ public class ParseDatabase {
     }
 
     private int hash(Logger logger, ParseItem parseItem) {
-        return this.hash(logger.push("hash").push("hash"), parseItem, 5);
+        return this.hash(logger.push("hash").push("hash"), parseItem, 6);
     }
 
     private int hash(Logger logger, ParseItem parseItem, int maxDepth) {
-        logger.message("Hashing " + parseItem.getText() + " (" + parseItem.getRuleType() + ")");
+        //logger.message("Hashing " + parseItem.getText() + " (" + parseItem.getRuleType() + ")");
         int numChildren = parseItem.getChildCount();
         int hash = parseItem.getRuleType().hashCode();
         //logger.message("Using starting node hash = " + hash + " for '" + parseItem.getText() + "'");
         if (numChildren == 1) {
             ParseItem child = parseItem.getChild(0);
             // this node is probably just an implementation detail that we're not interested in
-            hash = this.hash(logger.push("hash only child"), parseItem.getChild(0));
+            //hash = this.hash(logger.push("hash only child"), parseItem.getChild(0));
+            hash = this.hash(logger, parseItem.getChild(0), maxDepth);
         } else if (numChildren == 0) {
             hash = 1;
         } else {
@@ -64,11 +65,11 @@ public class ParseDatabase {
                 for (int i = 0; i < parseItem.getChildCount(); i++) {
                     int childHash = this.hash(logger.push("hash child"), parseItem.getChild(i), maxDepth - 1);
                     hash = hash * this.hashMultiplier + childHash;
-                    logger.message("updated hash to " + hash);
+                    //logger.message("updated hash to " + hash);
                 }
             }
         }
-        logger.message("Hashed '" + parseItem.getText() + "' to " + hash);
+        //logger.message("Hashed '" + parseItem.getText() + "' to " + hash);
         return hash;
     }
 

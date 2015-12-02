@@ -3,6 +3,7 @@ package parsing;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class ParseItem {
     public ParseItem(String text, String ruleType, String sourceDescription) {
@@ -23,17 +24,29 @@ public class ParseItem {
     public int getChildCount() {
         return this.children.size();
     }
+    public Collection<ParseItem> getChildren() {
+        return this.children;
+    }
     public ParseItem getChild(int index) {
         return this.children.get(index);
     }
     public void addChild(ParseItem child) {
         this.children.add(child);
+        this.num_nonLeaf_children += child.num_nonLeaf_children;
+        if (child.children.size() > 1) {
+            this.num_nonLeaf_children++;
+        }
+    }
+
+    public int get_num_nonLeaf_children() {
+        return this.num_nonLeaf_children;
     }
 
 
 
+    int num_nonLeaf_children = 0;
     String sourceDescription; // file name
-    public String text; // text of the node
-    public String ruleType; // name of the rule that matches this node
+    String text; // text of the node
+    String ruleType; // name of the rule that matches this node
     ArrayList<ParseItem> children = new ArrayList<>();
 }

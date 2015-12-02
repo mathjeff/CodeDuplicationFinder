@@ -27,13 +27,18 @@ idea {
     }
 }
 
+def demoArgs = ["--grammar-path", [project.buildFile.parent, 'src', 'main', 'resources', 'Java8.g4'].join(File.separator)]
+sourceSets.main.java.each { file ->
+  demoArgs.add("--scan-path")
+  demoArgs.add(file.path)
+}
 task demo(type: JavaExec) {
     main = mainClass
 
+    args = demoArgs
+
     classpath = sourceSets.main.runtimeClasspath
 
-    args = ["--scan-path", [project.buildFile.parent, 'src', 'main', 'java', 'matching', 'ParseDatabase.java'].join(File.separator),
-            "--grammar-path", [project.buildFile.parent, 'src', 'main', 'resources', 'Java8.g4'].join(File.separator)]
 
 }
 demo.dependsOn(assemble)
