@@ -49,13 +49,6 @@ public class CodeDuplicationFinder {
             ParseItem parse = parser.parse(logger, path);
             this.putParse(logger, db, parse);
         }
-        /*for (ParseItem item : db.getAll(logger)) {
-            List<ParseItem> matches = db.findSimilar(logger, item);
-            if (matches.size() > 1) {
-                logger.message("Found " + matches.size() + " matches to text "
-                        + item.getText() + " of rule " + item.getRuleType());
-            }
-        }*/
         Logger itemLogger = logger.push("match");
         TreeMap<Integer, List<ParseItem>> matchesBySignificance = new TreeMap<>();
         for (List<ParseItem> group : db.getMatchGroups(logger)) {
@@ -72,8 +65,10 @@ public class CodeDuplicationFinder {
                 }
             }
         }
+        logger.message("");
         logger.message("Found " + matchesBySignificance.size() + " groups of matches");
         for (List<ParseItem> group : matchesBySignificance.values()) {
+    		logger.message("");
             logger.message("Group:");
             for (ParseItem item : group) {
                 itemLogger.message(item.getText() + " (" + item.getRuleType() + " in " + item.getSourceDescription() + ")");
