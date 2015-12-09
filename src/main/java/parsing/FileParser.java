@@ -32,7 +32,7 @@ public class FileParser {
         CommonTokenStream tokens = new CommonTokenStream(lexEngine);
         ParserInterpreter parser = this.grammar.createParserInterpreter(tokens);
         ParserRuleContext tree = parser.parse(this.grammar.getRule(this.parseStartRuleName).index);
-        logger.message("parse tree: " + tree.toStringTree(parser));
+//GALAXYJIM        logger.message("parse tree: " + tree.toStringTree(parser));
         ParseItem item = this.toParseItem(subLogger, filePath, tree, parser);
         return item;
     }
