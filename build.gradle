@@ -1,5 +1,6 @@
 project.apply(plugin: 'java')
 project.apply(plugin: 'idea')
+project.apply(plugin: 'eclipse')
 repositories {
     mavenCentral()
 }

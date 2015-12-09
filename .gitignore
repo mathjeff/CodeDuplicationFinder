@@ -8,3 +8,6 @@ build
 setup.bat
 run.bat
 *.bak
+.classpath
+.settings
+.project
